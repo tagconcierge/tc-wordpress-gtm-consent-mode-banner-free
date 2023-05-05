@@ -1,0 +1,31 @@
+version: '2'
+services:
+    wordpress:
+        image: wordpress:latest
+        env_file: .env
+        restart: always
+        volumes:
+            - ./.docker/wordpress:/var/www/html/
+            - .:/var/www/html/wp-content/plugins/gtm-cookies-free
+        ports:
+            - "80:80"
+        links:
+            - mariadb
+    mariadb:
+        container_name: mariadb
+        image: mariadb:10.3
+        volumes:
+            - ./.docker/mariadb:/var/lib/mysql
+        environment:
+            MYSQL_DATABASE: wordpress
+            MYSQL_ROOT_PASSWORD: password
+        ports:
+            - "3306:3306"
+    cli:
+        image: wordpress:cli
+        env_file: .env
+        command: bash
+        volumes:
+            - ./docker/wordpress:/var/www/html/
+volumes:
+    mysql_data: {}
