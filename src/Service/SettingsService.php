@@ -17,19 +17,24 @@ class SettingsService
         $this->initialize();
     }
 
-    private function initialize()
+    private function initialize(): void
     {
         $this->settingsUtil->addTab(
             'settings',
             'Settings'
         );
 
+        $this->settingsUtil->addTab(
+            'event_settings',
+            'Event settings'
+        );
+
         add_action( 'admin_init', [$this, 'settingsInit'] );
         add_action( 'admin_menu', [$this, 'optionsPage'] );
     }
 
-    public function settingsInit() {
-
+    public function settingsInit(): void
+    {
         $this->settingsUtil->addSettingsSection(
             'basic',
             'Basic Settings',
@@ -44,6 +49,13 @@ class SettingsService
             'settings'
         );
 
+        $this->settingsUtil->addSettingsSection(
+            'consent_event',
+            'Consent event',
+            'Consent event configuration.',
+            'event_settings'
+        );
+
         $this->settingsUtil->addSettingsField(
             'disabled',
             'Disable?',
@@ -53,28 +65,117 @@ class SettingsService
         );
 
         $this->settingsUtil->addSettingsField(
+            'gtm_snippet_consent_required',
+            'Prevent loading GTM container before consent?',
+            [$this, 'checkboxField'],
+            'gtm_snippet',
+            'When checked the GTM container won\'t load before user consent.'
+        );
+
+        $this->settingsUtil->addSettingsField(
             'gtm_snippet_head',
             'GTM Snippet Head',
             [$this, 'textareaField'],
             'gtm_snippet',
             'Paste the first snippet provided by GTM. It will be loaded in the <head> of the page.',
-            ['rows'        => 9]
+            ['rows' => 9]
         );
-
 
         $this->settingsUtil->addSettingsField(
             'gtm_snippet_body',
-            'GTM Snippet body',
+            'GTM Snippet Body',
             [$this, 'textareaField'],
             'gtm_snippet',
             'Paste the second snippet provided by GTM. It will be load after opening <body> tag.',
-            ['rows'        => 6]
+            ['rows' => 6]
+        );
+
+        $this->settingsUtil->addSettingsField(
+            'consent_event_name',
+            'Consent event name',
+            [$this, 'inputField'],
+            'consent_event',
+            'Name of consent event emitted to GTM container.',
+            ['type' => 'text', 'placeholder' => 'consent_event']
+        );
+
+        $this->settingsUtil->addSettingsField(
+            'consent_event_parameters',
+            'Consent event parameters',
+            [$this, 'consentEventParametersFields'],
+            'consent_event',
+            'Name of consent event emitted to GTM container.',
+            ['type' => 'array']
         );
     }
 
-    public function checkboxField( $args ) {
+    public function consentEventParametersFields($args): void
+    {
+        $fieldsConfiguration = [
+            'name' => [
+                'renderMethodName' => 'inputField',
+                'description' => 'Name of consent type.',
+                'type' => 'text',
+                'placeholder' => 'Marketing consent',
+            ],
+            'description' => [
+                'renderMethodName' => 'textareaField',
+                'description' => 'Description of what is consented to.',
+            ],
+            'is_required' => [
+                'renderMethodName' => 'selectField',
+                'description' => 'Is it required?',
+                'options' => [
+                    '0' => 'optional',
+                    '1' => 'required',
+                ]
+            ],
+            'data_layer_name' => [
+                'renderMethodName' => 'inputField',
+                'description' => 'Name of parameter passed to dataLayer.',
+                'type' => 'text',
+                'placeholder' => 'marketing_consent',
+            ],
+        ];
+        $consentEventParameters = $this->settingsUtil->getOption('consent_event_parameters');
+
+        if (false === $consentEventParameters) {
+            $consentEventParameters = [
+                [
+                    'name' => 'Marketing consent',
+                    'description' => 'Consent to marketing purposes.',
+                    'is_required' => '0',
+                    'data_layer_name' => 'marketing_consent',
+                ]
+            ];
+        }
+
+        echo '<table>';
+        foreach ($consentEventParameters as $index => $parameterConfig) {
+            echo '<tr>';
+            foreach ($parameterConfig as $name => $value) {
+                $fieldName = sprintf('%s[%d][%s]', $args['label_for'], $index, $name);
+                $fieldConfiguration = $fieldsConfiguration[$name] ?? null;
+
+                if (null === $fieldConfiguration) {
+                    continue;
+                }
+                echo '<td>';
+                $this->{$fieldConfiguration['renderMethodName']}(array_merge($fieldConfiguration, [
+                    'label_for' => $fieldName,
+                    'value' => $value,
+                ]));
+                echo '</td>';
+            }
+            echo '</tr>';
+        }
+        echo '</table>';
+    }
+
+    public function checkboxField( $args ): void
+    {
         // Get the value of the setting we've registered with register_setting()
-        $value = get_option( $args['label_for'] );
+        $value = $args['value'] ?? get_option( $args['label_for'] );
         ?>
         <input
             type="checkbox"
@@ -94,9 +195,9 @@ class SettingsService
         <?php
     }
 
-    public function selectField( $args ) {
+    public function selectField( $args ): void {
         // Get the value of the setting we've registered with register_setting()
-        $selectedValue = get_option( $args['label_for'] );
+        $selectedValue = $args['value'] ?? get_option( $args['label_for'] );
         ?>
         <select
             type="checkbox"
@@ -121,9 +222,10 @@ class SettingsService
     }
 
 
-    public function textareaField( $args ) {
+    public function textareaField( $args ): void
+    {
         // Get the value of the setting we've registered with register_setting()
-        $value = get_option( $args['label_for'] );
+        $value = $args['value'] ?? get_option( $args['label_for'] );
         ?>
         <textarea
             id="<?php echo esc_attr( $args['label_for'] ); ?>"
@@ -136,9 +238,10 @@ class SettingsService
         <?php
     }
 
-    public function inputField( $args ) {
+    public function inputField( $args ): void
+    {
         // Get the value of the setting we've registered with register_setting()
-        $value = get_option( $args['label_for'] );
+        $value = $args['value'] ?? get_option( $args['label_for'] );
         ?>
         <input
             id="<?php echo esc_attr( $args['label_for'] ); ?>"
@@ -156,7 +259,8 @@ class SettingsService
         <?php
     }
 
-    public function optionsPage() {
+    public function optionsPage(): void
+    {
         $this->settingsUtil->addSubmenuPage(
             'options-general.php',
             'GTM Cookies Free',

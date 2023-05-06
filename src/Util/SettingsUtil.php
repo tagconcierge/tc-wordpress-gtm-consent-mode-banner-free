@@ -35,7 +35,7 @@ class SettingsUtil
         return update_option($this->snakeCaseNamespace . '_' . $optionName, $optionValue);
     }
 
-    public function registerSetting( $settingName): void {
+    public function registerSetting( $settingName ): void {
         register_setting( $this->snakeCaseNamespace, $this->snakeCaseNamespace . '_' . $settingName );
     }
 
