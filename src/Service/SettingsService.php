@@ -121,6 +121,7 @@ class SettingsService
             'description' => [
                 'renderMethodName' => 'textareaField',
                 'description' => 'Description of what is consented to.',
+                'rows' => 6,
             ],
             'is_required' => [
                 'renderMethodName' => 'selectField',
@@ -150,7 +151,29 @@ class SettingsService
             ];
         }
 
-        echo '<table>';
+        if (false === is_array($consentEventParameters)) {
+            $consentEventParameters = [];
+        }
+
+        $hasEmptyRow = false;
+
+        foreach ($consentEventParameters as $consentEventParameter) {
+            if (false === isset($consentEventParameter['data_layer_name']) || true === empty($consentEventParameter['data_layer_name'])) {
+                $hasEmptyRow = true;
+                break;
+            }
+        }
+
+        if (false === $hasEmptyRow) {
+            $consentEventParameters[] = [
+                'name' => '',
+                'description' => '',
+                'is_required' => '0',
+                'data_layer_name' => '',
+            ];
+        }
+
+        echo '<table style="width: 100%;">';
         foreach ($consentEventParameters as $index => $parameterConfig) {
             echo '<tr>';
             foreach ($parameterConfig as $name => $value) {
@@ -167,6 +190,7 @@ class SettingsService
                 ]));
                 echo '</td>';
             }
+            echo '<td><a href="#" class="consent-event-parameter-remove" onclick="this.parentNode.parentNode.remove();">remove</a></td>';
             echo '</tr>';
         }
         echo '</table>';
