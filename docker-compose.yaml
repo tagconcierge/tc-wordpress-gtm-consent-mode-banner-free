@@ -27,5 +27,11 @@ services:
         command: bash
         volumes:
             - ./docker/wordpress:/var/www/html/
+    php-cli:
+        image: mfrankiewicz/php:7.1-cli
+        working_dir: /var/www
+        entrypoint: bash
+        volumes:
+            - ./:/var/www
 volumes:
     mysql_data: {}

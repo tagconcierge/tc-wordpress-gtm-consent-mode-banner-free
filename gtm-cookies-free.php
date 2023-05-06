@@ -12,4 +12,9 @@
  * Domain Path: /languages
  */
 
-var_dump('hello from gtm cookies free');
+use TagConcierge\GtmCookiesFree\GtmCookiesFree;
+
+require __DIR__ . '/vendor/autoload.php';
+
+$plugin = new GtmCookiesFree();
+$plugin->initialize();

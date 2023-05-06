@@ -1,0 +1,13 @@
+{
+    "name": "tagconcierge/gc-wordpress-plugin-free",
+    "type": "wordpress-plugin",
+    "minimum-stability": "stable",
+    "autoload": {
+        "psr-4": {
+            "TagConcierge\\GtmCookiesFree\\": "src"
+        }
+    },
+    "require-dev": {
+        "johnpbloch/wordpress-core": "*"
+    }
+}
