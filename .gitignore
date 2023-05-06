@@ -1,5 +1,5 @@
 /.docker
 /.idea
 /.env
-
+/dist
 /vendor/
