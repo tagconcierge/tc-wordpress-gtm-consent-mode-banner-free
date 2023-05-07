@@ -26,7 +26,7 @@ class SettingsService
 
         $this->settingsUtil->addTab(
             'event_settings',
-            'Event settings'
+            'Cookies Categories'
         );
 
         add_action( 'admin_init', [$this, 'settingsInit'] );
@@ -38,7 +38,7 @@ class SettingsService
         $this->settingsUtil->addSettingsSection(
             'basic',
             'Basic Settings',
-            'GTM Cookies',
+            'GTM Cookies allows to quickly deploy robust, privacy-oriented setup using Google Tag Manager and dataLayer. [LINK TO DOCS]',
             'settings'
         );
 
@@ -52,7 +52,14 @@ class SettingsService
         $this->settingsUtil->addSettingsSection(
             'consent_event',
             'Consent event',
-            'Consent event configuration.',
+            'Consent event is pushed to DataLayer when user decides on their cookies preference. This event will contain detailed consent information for each cookie category. [LINK TO DOCS]',
+            'settings'
+        );
+
+        $this->settingsUtil->addSettingsSection(
+            'consent_event_parameters',
+            'Cookies Categories',
+            'Use the table below to specify all categories of cookies and tools that your website use. Each entry consist of title, detailed description, option to make it required and name of the parameter being pushed to GTM DataLayer.',
             'event_settings'
         );
 
@@ -69,7 +76,7 @@ class SettingsService
             'Prevent loading GTM container before consent?',
             [$this, 'checkboxField'],
             'gtm_snippet',
-            'When checked the GTM container won\'t load before user consent.'
+            'When checked the GTM container won\'t load before user provides information about their consent. Only after any settings on the cookies banner are saved the GTM will be initated. It ensures no 3rd party tools and cookies are loaded before user consents. [LINK TO DOCS]'
         );
 
         $this->settingsUtil->addSettingsField(
@@ -95,15 +102,24 @@ class SettingsService
             'Consent event name',
             [$this, 'inputField'],
             'consent_event',
-            'Name of consent event emitted to GTM container.',
-            ['type' => 'text', 'placeholder' => 'consent_event']
+            'Name of the consent event emitted to GTM container.',
+            ['type' => 'text', 'placeholder' => 'user_consent']
         );
+
+        $this->settingsUtil->addSettingsField(
+            '_TODO_repush_events',
+            'Defer events?',
+            [$this, 'checkboxField'],
+            'consent_event',
+            'Select to use with eCommerce events or any tags that rely on both consent event and GTM Variable Version 1 [LINK TO DOCS].'
+        );
+        // Tags that rely on both consent event and variables may not receive correct values when events are not pushed
 
         $this->settingsUtil->addSettingsField(
             'consent_event_parameters',
             'Consent event parameters',
             [$this, 'consentEventParametersFields'],
-            'consent_event',
+            'consent_event_parameters',
             'Name of consent event emitted to GTM container.',
             ['type' => 'array']
         );
@@ -114,18 +130,18 @@ class SettingsService
         $fieldsConfiguration = [
             'name' => [
                 'renderMethodName' => 'inputField',
-                'description' => 'Name of consent type.',
+                'description' => 'Cookies category title',
                 'type' => 'text',
-                'placeholder' => 'Marketing consent',
+                'placeholder' => 'Marketing',
             ],
             'description' => [
                 'renderMethodName' => 'textareaField',
-                'description' => 'Description of what is consented to.',
+                'description' => 'Detailed description of what those cookies are used for.',
                 'rows' => 6,
             ],
             'is_required' => [
                 'renderMethodName' => 'selectField',
-                'description' => 'Is it required?',
+                'description' => 'Is this consent mandatory?',
                 'options' => [
                     '0' => 'optional',
                     '1' => 'required',
@@ -133,7 +149,7 @@ class SettingsService
             ],
             'data_layer_name' => [
                 'renderMethodName' => 'inputField',
-                'description' => 'Name of parameter passed to dataLayer.',
+                'description' => 'Parameter passed to dataLayer.',
                 'type' => 'text',
                 'placeholder' => 'marketing_consent',
             ],
@@ -287,8 +303,8 @@ class SettingsService
     {
         $this->settingsUtil->addSubmenuPage(
             'options-general.php',
-            'GTM Cookies Free',
-            'GTM Cookies Free',
+            'GTM Cookies',
+            'GTM Cookies',
             'manage_options'
         );
     }
