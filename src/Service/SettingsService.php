@@ -107,6 +107,15 @@ class SettingsService
         );
 
         $this->settingsUtil->addSettingsField(
+            '_TODO_repush_events',
+            'Defer events?',
+            [$this, 'checkboxField'],
+            'consent_event',
+            'Select to use with eCommerce events or any tags that rely on both consent event and GTM Variable Version 1 [LINK TO DOCS].'
+        );
+        // Tags that rely on both consent event and variables may not receive correct values when events are not pushed
+
+        $this->settingsUtil->addSettingsField(
             'consent_event_parameters',
             'Consent event parameters',
             [$this, 'consentEventParametersFields'],
