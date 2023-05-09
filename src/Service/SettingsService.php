@@ -107,7 +107,7 @@ class SettingsService
         );
 
         $this->settingsUtil->addSettingsField(
-            '_TODO_repush_events',
+            'defer_events',
             'Defer events?',
             [$this, 'checkboxField'],
             'consent_event',
