@@ -24,11 +24,58 @@ class GtmSnippetService
         if ('1' === $this->settingsUtil->getOption('disabled')) {
             return;
         }
+        $script = <<<EOD
+window.gtmCookies = {
+    deferredEvents: [],
+    isConsentGranted: function () { return '1' === localStorage.getItem('GTM_COOKIES_CONSENT');},
+    setConsent: function (isGranted) { return localStorage.setItem('GTM_COOKIES_CONSENT', true === isGranted ? '1' : '0'); },
+    callbacks: {},
+    on: function(event, callback) {
+        if (false === gtmCookies.callbacks.hasOwnProperty(event)) {
+            gtmCookies.callbacks[event] = [];
+        }
+        
+        gtmCookies.callbacks[event].push(callback);
+    },
+    emit: function(event, data) {
+        if (false === gtmCookies.callbacks.hasOwnProperty(event)) {
+            return;
+        }
+        gtmCookies.callbacks[event].forEach(function(callback) { callback(data); });
+    }
+};
+
+window.dataLayer = window.dataLayer || [];
+EOD;
+        $this->outputUtil->addInlineScript($script, false);
+
 
         if ('1' === $this->settingsUtil->getOption('defer_events')) {
+            $consentEventName = $this->settingsUtil->getOption('consent_event_name');
             $script = <<<EOD
-window.dataLayer = window.dataLayer || [];
+dataLayer.originPush = dataLayer.push;
+dataLayer.push = function(item) {
+    if (true === gtmCookies.isConsentGranted()) {
+        return dataLayer.originPush(item);
+    }
+    
+    const result = gtmCookies.deferredEvents.push(item);
+    
+    if ('object' === typeof item) {
+        if (item.hasOwnProperty('event') && '{$consentEventName}' === item['event']) {
+            gtmCookies.emit('consentGranted');
+        }
+    }
+    
+    return result;
+};
 
+gtmCookies.on('consentGranted', function() {
+    gtmCookies.setConsent(true);
+    gtmCookies.deferredEvents.forEach(function(event){
+        dataLayer.originPush(event);
+    });
+});
 EOD;
             $this->outputUtil->addInlineScript($script, false);
         }

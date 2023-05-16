@@ -24,7 +24,7 @@ class OutputUtil
             echo '<!-- gtm-ecommerce-woo no-header-scripts -->';
             return;
         }
-        echo '<script type="text/javascript" data-gtm-ecommerce-woo-scripts>';
+        echo '<script type="text/javascript" data-gtm-cookies-scripts>';
         foreach ($this->inlineScripts['header'] as $script) {
             echo filter_var($script, FILTER_FLAG_STRIP_BACKTICK) . "\n";
         }
