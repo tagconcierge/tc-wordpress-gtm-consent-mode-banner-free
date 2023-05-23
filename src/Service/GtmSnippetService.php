@@ -11,10 +11,23 @@ class GtmSnippetService
 
     private $outputUtil;
 
+    private $consentEventName = '';
+
+    private $requireConsentBeforeGtmLoad = false;
+
+    private $eventDeferring = false;
+
+    private $dataLayerVariableName = 'dataLayer';
+
     public function __construct(SettingsUtil $settingsUtil, OutputUtil $outputUtil)
     {
         $this->settingsUtil = $settingsUtil;
         $this->outputUtil = $outputUtil;
+
+        $this->eventDeferring = '1' === $this->settingsUtil->getOption('defer_events');
+        $this->requireConsentBeforeGtmLoad = '1' === $this->settingsUtil->getOption('gtm_snippet_consent_required');
+        $this->dataLayerVariableName = true === $this->eventDeferring || true === $this->requireConsentBeforeGtmLoad ? 'gtmCookieDataLayer' : 'dataLayer';
+        $this->consentEventName = $this->settingsUtil->getOption('consent_event_name');
 
         $this->initialize();
     }
@@ -25,9 +38,8 @@ class GtmSnippetService
             return;
         }
 
-        $deferEvents = '1' === $this->settingsUtil->getOption('defer_events') ? 'true' : 'false';
-        $consentEventName = $this->settingsUtil->getOption('consent_event_name') ? $this->settingsUtil->getOption('consent_event_name') : '';
-        $requireConsentBeforeGtmLoad = '1' === $this->settingsUtil->getOption('gtm_snippet_consent_required') ? 'true' : 'false';
+        $requireConsentBeforeGtmLoad = $this->requireConsentBeforeGtmLoad ? 'true' : 'false';
+        $eventDeferring = $this->eventDeferring ? 'true' : 'false';
 
         $script = <<<EOD
 window.dataLayer = window.dataLayer || [];
@@ -35,8 +47,8 @@ window.dataLayer = window.dataLayer || [];
 window.gtmCookies = {
     config: {
         gtmLoaded: false,
-        deferEvents: {$deferEvents},
-        consentEventName: '{$consentEventName}',
+        eventDeferring: {$eventDeferring},
+        consentEventName: '{$this->consentEventName}',
         requireConsentBeforeGtmLoad: {$requireConsentBeforeGtmLoad}
     },
     deferredEvents: [],
@@ -68,7 +80,7 @@ window.gtmCookies = {
         }
         
         while (0 < events.length) {
-            dataLayer.originPush(events.pop());
+            {$this->dataLayerVariableName}.push(events.pop());
         }
     }
 };
@@ -76,32 +88,34 @@ window.gtmCookies = {
 gtmCookies.on('gtmLoaded', function() {
     gtmCookies.config.gtmLoaded = true;
 });
+
+const checkGtm = function() {
+    if ('undefined' === typeof window['google_tag_manager']) {
+        setTimeout(checkGtm, 500);
+        return;
+    }
+
+    gtmCookies.emit('gtmLoaded');
+};
+
+checkGtm();
+
 EOD;
         $this->outputUtil->addInlineScript($script, false);
 
 
-        if ('1' === $this->settingsUtil->getOption('defer_events')) {
+        if (true === $this->eventDeferring || true === $this->requireConsentBeforeGtmLoad) {
             $script = <<<EOD
+window.gtmCookieDataLayer = [];
 dataLayer.originPush = dataLayer.push;
 dataLayer.push = function(item) {
-    const isGtmObject = 'object' === typeof item && item.hasOwnProperty('event') && item['event'].includes('gtm.');
     let result = null;
     
-    if (true === gtmCookies.config.requireConsentBeforeGtmLoad && true === isGtmObject) {
-        result = dataLayer.originPush(item);
-    } else if (true === gtmCookies.config.requireConsentBeforeGtmLoad && false === gtmCookies.config.gtmLoaded) {
-        result = gtmCookies.deferredEvents.push(item);
-    } else if (true === gtmCookies.isConsentGranted()) {
-        result = dataLayer.originPush(item);
-    } else {
-        result = gtmCookies.deferredEvents.push(item);
-    }
-        
-    if (true === isGtmObject && 'gtm.load' === item['event']) {
-        gtmCookies.emit('gtmLoaded');
+    if (false === gtmCookies.config.gtmLoaded || (true === gtmCookies.config.eventDeferring && false === gtmCookies.isConsentGranted())) {
+        return gtmCookies.deferredEvents.push(item);
     }
     
-    return result;
+    return gtmCookieDataLayer.push(item);
 };
 
 gtmCookies.on('consentGranted', function() {    
@@ -114,20 +128,20 @@ gtmCookies.on('consentGranted', function() {
     }
 });
 
-if (true === gtmCookies.config.requireConsentBeforeGtmLoad) {
-    gtmCookies.on('gtmLoaded', function() {
+gtmCookies.on('gtmLoaded', function() {
+    if (true === gtmCookies.isConsentGranted()) {
         gtmCookies.repushEvents();
-    });
-}
+    }
+});
 EOD;
             $this->outputUtil->addInlineScript($script, false);
         }
 
-        $requireConsentBeforeGtmLoad = '1' === $this->settingsUtil->getOption('gtm_snippet_consent_required');
 
         if (false === empty($headSnippet = $this->settingsUtil->getOption('gtm_snippet_head'))) {
-            if (true === $requireConsentBeforeGtmLoad) {
+            if (true === $this->requireConsentBeforeGtmLoad) {
                 $gtmId = $this->extractGtmId($headSnippet);
+
                 $script = <<<EOD
 const gtmCookiesLoadHeadSnippet = function() {
     if (false === gtmCookies.isConsentGranted()) {
@@ -139,7 +153,7 @@ const gtmCookiesLoadHeadSnippet = function() {
     new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
     j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','{$gtmId}');
+    })(window,document,'script','{$this->dataLayerVariableName}','{$gtmId}');
 };
 
 gtmCookiesLoadHeadSnippet();
@@ -151,7 +165,7 @@ EOD;
         }
 
         if (false === empty($bodySnippet = $this->settingsUtil->getOption('gtm_snippet_body'))) {
-            if (true === $requireConsentBeforeGtmLoad) {
+            if (true === $this->requireConsentBeforeGtmLoad) {
                 $gtmId = $this->extractGtmId($bodySnippet);
                 $script = <<<EOD
 const gtmCookiesLoadBodySnippet = function() {
@@ -179,9 +193,15 @@ EOD;
         }
     }
 
-    public function headSnippet($headSnippet): void
+    public function headSnippet(): void
     {
-        echo filter_var($this->settingsUtil->getOption('gtm_snippet_head'), FILTER_FLAG_STRIP_BACKTICK) . "\n";
+        $snippet = $this->settingsUtil->getOption('gtm_snippet_head');
+
+        if (true === $this->eventDeferring) {
+            $snippet = str_replace('\'dataLayer\',', '\''.$this->dataLayerVariableName.'\',', $snippet);
+        }
+
+        echo filter_var($snippet, FILTER_FLAG_STRIP_BACKTICK) . "\n";
     }
 
     public function bodySnippet(): void
