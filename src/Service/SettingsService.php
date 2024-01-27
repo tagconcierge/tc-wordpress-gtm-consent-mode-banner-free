@@ -1,9 +1,9 @@
 <?php
 
-namespace TagConcierge\GtmCookiesFree\Service;
+namespace TagConcierge\GtmConsentModeBanner\Service;
 
-use TagConcierge\GtmCookiesFree\Util\SanitizationUtil;
-use TagConcierge\GtmCookiesFree\Util\SettingsUtil;
+use TagConcierge\GtmConsentModeBanner\Util\SanitizationUtil;
+use TagConcierge\GtmConsentModeBanner\Util\SettingsUtil;
 
 class SettingsService
 {
@@ -26,7 +26,7 @@ class SettingsService
 
         $this->settingsUtil->addTab(
             'event_settings',
-            'Cookies Categories'
+            'Consent Types'
         );
 
         add_action( 'admin_init', [$this, 'settingsInit'] );
@@ -38,28 +38,35 @@ class SettingsService
         $this->settingsUtil->addSettingsSection(
             'basic',
             'Basic Settings',
-            'GTM Cookies allows to quickly deploy robust, privacy-oriented setup using Google Tag Manager and dataLayer. [LINK TO DOCS]',
+            'This plugin allows to quickly deploy robust, privacy-oriented setup using Google Tag Manager Consent Mode. Under the hood it uses a lightweight (1.9kB) Cookie Banner.',
+            'settings'
+        );
+
+        $this->settingsUtil->addSettingsSection(
+            'banner',
+            'Banner Main Modal',
+            'Customise content of the main banner modal that is shown when user has not provided their consent. It allows user to grant all consent types or open settings.',
+            'settings'
+        );
+
+        $this->settingsUtil->addSettingsSection(
+            'banner_settings_modal',
+            'Banner Settings Modal',
+            'Customise content of the settings modal that allows user to grant only selected consent types.',
             'settings'
         );
 
         $this->settingsUtil->addSettingsSection(
             'gtm_snippet',
             'Google Tag Manager snippet',
-            'Paste two snippets provided by GTM. To find those snippets navigate to `Admin` tab in GTM console and click `Install Google Tag Manager`. If you already implemented GTM snippets in your page, paste them below, but select appropriate `Prevent loading GTM Snippet` option.',
+            'You can use the settings below to optionally load GTM instance. If you are already loading GTM snippets somewhere else e.g. other plugins or directly in the theme code leave those fields empty. Paste two snippets provided by GTM. To find those snippets navigate to `Admin` tab in GTM console and click `Install Google Tag Manager`. If you already implemented GTM snippets in your page, paste them below, but select appropriate `Prevent loading GTM Snippet` option.',
             'settings'
         );
 
         $this->settingsUtil->addSettingsSection(
-            'consent_event',
-            'Consent event',
-            'Consent event is pushed to DataLayer when user decides on their cookies preference. This event will contain detailed consent information for each cookie category. [LINK TO DOCS]',
-            'settings'
-        );
-
-        $this->settingsUtil->addSettingsSection(
-            'consent_event_parameters',
-            'Cookies Categories',
-            'Use the table below to specify all categories of cookies and tools that your website use. Each entry consist of title, detailed description, option to make it required and name of the parameter being pushed to GTM DataLayer.',
+            'consent_settings',
+            'Consent Types',
+            'Consent type is a category of ',
             'event_settings'
         );
 
@@ -72,11 +79,21 @@ class SettingsService
         );
 
         $this->settingsUtil->addSettingsField(
-            'gtm_snippet_consent_required',
-            'Prevent loading GTM container before consent?',
-            [$this, 'checkboxField'],
-            'gtm_snippet',
-            'When checked the GTM container won\'t load before user provides information about their consent. Only after any settings on the cookies banner are saved the GTM will be initated. It ensures no 3rd party tools and cookies are loaded before user consents. [LINK TO DOCS]'
+            'banner_display_mode',
+            'Display Mode',
+            [$this, 'selectField'],
+            'basic',
+            'Form of the banner, small bar at the bottom of the page or center modal covering content.',
+            ['options' => ['bar' => 'Bar', 'modal' => 'Modal']]
+        );
+
+        $this->settingsUtil->addSettingsField(
+            'banner_theme',
+            'Theme',
+            [$this, 'selectField'],
+            'basic',
+            'Select theme of the banner that will apply default styling.',
+            ['options' => ['light' => 'Light', 'dark' => 'Dark']]
         );
 
         $this->settingsUtil->addSettingsField(
@@ -98,31 +115,119 @@ class SettingsService
         );
 
         $this->settingsUtil->addSettingsField(
-            'consent_event_name',
-            'Consent event name',
+            'banner_title',
+            'Title',
             [$this, 'inputField'],
-            'consent_event',
-            'Name of the consent event emitted to GTM container.',
-            ['type' => 'text', 'placeholder' => 'user_consent']
+            'banner',
+            'Title of the main banner modal. Not shown when Display Mode is set to "bar".'
         );
 
         $this->settingsUtil->addSettingsField(
-            'defer_events',
-            'Defer events?',
-            [$this, 'checkboxField'],
-            'consent_event',
-            'Select to use with eCommerce events or any tags that rely on both consent event and GTM Variable Version 1 [LINK TO DOCS].'
+            'banner_description',
+            'Content',
+            [$this, 'inputField'],
+            'banner',
+            'Content of the banner. Supports simple markdown like [links](https://url.com) or **bold**. Buttons will be shown on the right side of this content.'
         );
-        // Tags that rely on both consent event and variables may not receive correct values when events are not pushed
 
         $this->settingsUtil->addSettingsField(
-            'consent_event_parameters',
-            'Consent event parameters',
+            'banner_buttons_accept',
+            'Accept Button',
+            [$this, 'inputField'],
+            'banner',
+            'Text of accept button on the main banner.'
+        );
+
+        $this->settingsUtil->addSettingsField(
+            'banner_buttons_settings',
+            'Open Settings Button',
+            [$this, 'inputField'],
+            'banner',
+            'Text of settings button on the main banner.'
+        );
+
+        $this->settingsUtil->addSettingsField(
+            'banner_settings_title',
+            'Title',
+            [$this, 'inputField'],
+            'banner_settings_modal',
+            'Title of the main banner modal. Not shown when Display Mode is set to "bar".'
+        );
+
+        $this->settingsUtil->addSettingsField(
+            'banner_settings_description',
+            'Content',
+            [$this, 'inputField'],
+            'banner_settings_modal',
+            'Content of the banner. Supports simple markdown like [links](https://url.com) or **bold**. '
+        );
+
+        $this->settingsUtil->addSettingsField(
+            'banner_settings_buttons_save',
+            'Save Button',
+            [$this, 'inputField'],
+            'banner_settings_modal',
+            'Text of save button on the main banner.'
+        );
+
+        $this->settingsUtil->addSettingsField(
+            'banner_settings_buttons_close',
+            'Close Button',
+            [$this, 'inputField'],
+            'banner_settings_modal',
+            'Text of settings button on the main banner.'
+        );
+
+        $this->settingsUtil->addSettingsField(
+            'consent_types',
+            'Consent Types',
             [$this, 'consentEventParametersFields'],
-            'consent_event_parameters',
+            'consent_settings',
             'Name of consent event emitted to GTM container.',
             ['type' => 'array']
         );
+
+           $defaults = [
+            'banner_display_mode' => 'bar',
+            'banner_title' => 'Cookies Policy',
+            'banner_description' => 'We are using various cookies files. Learn more in our [privacy policy](#) and make your choice.',
+            'banner_buttons_accept' => 'Accept',
+            'banner_buttons_settings' => 'Settings',
+            'banner_settings_title' => 'Cookies Settings',
+            'banner_settings_description' => 'In order to provide you with best experience we use various...',
+            'banner_settings_buttons_save' => 'Save preferences',
+            'banner_settings_buttons_close' => 'Close',
+            'consent_types' => [
+                [
+                    'name' => 'analytics_storage',
+                    'title' => "Analytics storage",
+                    'description' => 'Enables storage, such as cookies, related to analytics (for example, visit duration)',
+                    'default' => 'denied'
+                ], [
+                    'name' => "ad_storage",
+                    'title' => "Ads storage",
+                    'description' => "Enables storage, such as cookies, related to advertising [link](https =>//www.google.com)",
+                    'default' => 'denied'
+                ], [
+                    'name' => 'ad_user_data',
+                    'title' => "User Data",
+                    'description' => 'Sets consent for sending user data to Google for online advertising purposes.',
+                    'default' => 'denied'
+                ], [
+                    'name' => 'ad_personalization',
+                    'title' => "Personalization",
+                    'description' => 'Sets consent for personalized advertising.',
+                    'default' => 'denied'
+                ]
+            ]
+        ];
+
+        foreach ($defaults as $defOpt => $defVal) {
+            // $this->settingsUtil->deleteOption($defOpt);
+            if ( false === $this->settingsUtil->getOption($defOpt) ) {
+                $this->settingsUtil->updateOption($defOpt, $defVal);
+            }
+        }
     }
 
     public function consentEventParametersFields($args): void
@@ -130,42 +235,27 @@ class SettingsService
         $fieldsConfiguration = [
             'name' => [
                 'renderMethodName' => 'inputField',
-                'description' => 'Cookies category title',
+                'placeholder' => 'Internal Consent Type Name',
                 'type' => 'text',
-                'placeholder' => 'Marketing',
+            ],
+            'title' => [
+                'renderMethodName' => 'inputField',
+                'placeholder' => 'User facing title',
+                'type' => 'text',
             ],
             'description' => [
                 'renderMethodName' => 'textareaField',
-                'description' => 'Detailed description of what those cookies are used for.',
+                'placeholder' => 'Detailed description of what those cookies are used for.',
                 'rows' => 6,
             ],
-            'is_required' => [
+            'default' => [
                 'renderMethodName' => 'selectField',
-                'description' => 'Is this consent mandatory?',
-                'options' => [
-                    '0' => 'optional',
-                    '1' => 'required',
-                ]
-            ],
-            'data_layer_name' => [
-                'renderMethodName' => 'inputField',
-                'description' => 'Parameter passed to dataLayer.',
-                'type' => 'text',
-                'placeholder' => 'marketing_consent',
+                'placeholder' => 'Default state',
+                'options' => ['denied' => 'denied', 'granted' => 'granted'],
             ],
         ];
-        $consentEventParameters = $this->settingsUtil->getOption('consent_event_parameters');
-
-        if (false === $consentEventParameters) {
-            $consentEventParameters = [
-                [
-                    'name' => 'Marketing consent',
-                    'description' => 'Consent to marketing purposes.',
-                    'is_required' => '0',
-                    'data_layer_name' => 'marketing_consent',
-                ]
-            ];
-        }
+        // $this->settingsUtil->deleteOption('consent_types');
+        $consentEventParameters = $this->settingsUtil->getOption('consent_types');
 
         if (false === is_array($consentEventParameters)) {
             $consentEventParameters = [];
@@ -174,7 +264,7 @@ class SettingsService
         $hasEmptyRow = false;
 
         foreach ($consentEventParameters as $consentEventParameter) {
-            if (false === isset($consentEventParameter['data_layer_name']) || true === empty($consentEventParameter['data_layer_name'])) {
+            if (false === isset($consentEventParameter['name']) || true === empty($consentEventParameter['name'])) {
                 $hasEmptyRow = true;
                 break;
             }
@@ -183,13 +273,18 @@ class SettingsService
         if (false === $hasEmptyRow) {
             $consentEventParameters[] = [
                 'name' => '',
+                'title' => '',
                 'description' => '',
-                'is_required' => '0',
-                'data_layer_name' => '',
+                'default' => '',
             ];
         }
 
         echo '<table style="width: 100%;">';
+        echo '<th>';
+        echo '<tr>';
+        echo '<td><strong>Consent Type<strong></td><td>Title</td><td>Description</td><td>Default</td>';
+        echo '</tr>';
+        echo '</th>';
         foreach ($consentEventParameters as $index => $parameterConfig) {
             echo '<tr>';
             foreach ($parameterConfig as $name => $value) {
@@ -199,7 +294,7 @@ class SettingsService
                 if (null === $fieldConfiguration) {
                     continue;
                 }
-                echo '<td>';
+                echo '<td style="vertical-align: top">';
                 $this->{$fieldConfiguration['renderMethodName']}(array_merge($fieldConfiguration, [
                     'label_for' => $fieldName,
                     'value' => $value,
@@ -229,9 +324,11 @@ class SettingsService
             <?php endif; ?>
             value="1"
             <?php checked( $value, 1 ); ?> />
+        <?php if (@$args['description']) : ?>
         <p class="description">
             <?php echo wp_kses($args['description'], SanitizationUtil::WP_KSES_ALLOWED_HTML, SanitizationUtil::WP_KSES_ALLOWED_PROTOCOLS); ?>
         </p>
+        <?php endif; ?>
         <?php
     }
 
@@ -271,6 +368,7 @@ class SettingsService
             id="<?php echo esc_attr( $args['label_for'] ); ?>"
             class="large-text code"
             rows="<?php echo esc_html( $args['rows'] ); ?>"
+            placeholder="<?php echo esc_html( $args['placeholder'] ); ?>"
             name="<?php echo esc_attr( $args['label_for'] ); ?>"><?php echo wp_kses($value, SanitizationUtil::WP_KSES_ALLOWED_HTML, SanitizationUtil::WP_KSES_ALLOWED_PROTOCOLS); ?></textarea>
         <p class="description">
             <?php echo esc_html( $args['description'] ); ?>
@@ -303,8 +401,8 @@ class SettingsService
     {
         $this->settingsUtil->addSubmenuPage(
             'options-general.php',
-            'GTM Cookies',
-            'GTM Cookies',
+            'GTM Consent Mode Banner',
+            'GTM Consent Mode',
             'manage_options'
         );
     }

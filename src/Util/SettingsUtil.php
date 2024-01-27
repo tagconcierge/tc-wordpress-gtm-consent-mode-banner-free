@@ -1,8 +1,8 @@
 <?php
 
-namespace TagConcierge\GtmCookiesFree\Util;
+namespace TagConcierge\GtmConsentModeBanner\Util;
 
-use TagConcierge\GtmCookiesFree\GtmCookiesFree;
+use TagConcierge\GtmConsentModeBanner\GtmConsentModeBanner;
 
 class SettingsUtil
 {
@@ -17,8 +17,8 @@ class SettingsUtil
 
     public function __construct()
     {
-        $this->snakeCaseNamespace = GtmCookiesFree::SNAKE_CASE_NAMESPACE;
-        $this->spineCaseNamespace = GtmCookiesFree::SPINE_CASE_NAMESPACE;
+        $this->snakeCaseNamespace = GtmConsentModeBanner::SNAKE_CASE_NAMESPACE;
+        $this->spineCaseNamespace = GtmConsentModeBanner::SPINE_CASE_NAMESPACE;
     }
 
     public function getOption( $optionName) {

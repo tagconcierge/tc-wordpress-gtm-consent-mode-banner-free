@@ -1,6 +1,6 @@
 <?php
 
-namespace TagConcierge\GtmCookiesFree\Util;
+namespace TagConcierge\GtmConsentModeBanner\Util;
 
 class SanitizationUtil {
 

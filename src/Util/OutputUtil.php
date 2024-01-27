@@ -1,15 +1,23 @@
 <?php
 
-namespace TagConcierge\GtmCookiesFree\Util;
+namespace TagConcierge\GtmConsentModeBanner\Util;
 
 class OutputUtil
 {
     private $inlineScripts = ['header' => [], 'footer' => []];
+    private $externalScripts = ['header' => [], 'footer' => []];
 
     public function __construct()
     {
         add_action( 'wp_head', [$this, 'wpHead'], 0 );
-        add_action( 'wp_footer', [$this, 'wpFooter'], 0 );
+        add_action( 'wp_footer', [$this, 'wpFooter'], 1 );
+    }
+
+    public function loadExternalScript($script, $footer = true): OutputUtil
+    {
+        $this->externalScripts[true === $footer ? 'footer' : 'header'][] = $script;
+
+        return $this;
     }
 
     public function addInlineScript($script, $footer = true): OutputUtil
@@ -34,6 +42,12 @@ class OutputUtil
 
     public function wpFooter(): void
     {
+        foreach ($this->externalScripts['footer'] as $script) {
+            echo '<script type="text/javascript" src="'
+                . esc_url($script)
+                . '"></script>' . "\n";
+        }
+
         if (0 === count($this->inlineScripts['footer'])) {
             echo '<!-- gtm-cookies no-footer-scripts -->';
             return;

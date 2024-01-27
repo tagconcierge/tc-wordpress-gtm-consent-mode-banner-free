@@ -1,11 +1,11 @@
 <?php
 
-namespace TagConcierge\GtmCookiesFree\DependencyInjection;
+namespace TagConcierge\GtmConsentModeBanner\DependencyInjection;
 
-use TagConcierge\GtmCookiesFree\Service\GtmSnippetService;
-use TagConcierge\GtmCookiesFree\Service\SettingsService;
-use TagConcierge\GtmCookiesFree\Util\OutputUtil;
-use TagConcierge\GtmCookiesFree\Util\SettingsUtil;
+use TagConcierge\GtmConsentModeBanner\Service\GtmConsentModeService;
+use TagConcierge\GtmConsentModeBanner\Service\SettingsService;
+use TagConcierge\GtmConsentModeBanner\Util\OutputUtil;
+use TagConcierge\GtmConsentModeBanner\Util\SettingsUtil;
 
 class Container
 {
@@ -21,7 +21,7 @@ class Container
     {
         $this->outputUtil = new OutputUtil();
         $this->settingsUtil = new SettingsUtil();
-        $this->gtmSnippetService = new GtmSnippetService($this->settingsUtil, $this->outputUtil);
+        $this->gtmSnippetService = new GtmConsentModeService($this->settingsUtil, $this->outputUtil);
         $this->settingsService = new SettingsService($this->settingsUtil);
     }
 

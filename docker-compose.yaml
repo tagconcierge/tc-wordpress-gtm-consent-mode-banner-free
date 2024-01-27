@@ -1,37 +1,64 @@
-version: '2'
+# dockerpresso 2.1.0
 services:
-    wordpress:
-        image: wordpress:latest
+    web:
+        image: wordpress:$WORDPRESS_VERSION
         env_file: .env
         restart: always
         volumes:
-            - ./.docker/wordpress:/var/www/html/
-            - .:/var/www/html/wp-content/plugins/gtm-cookies-free
+            - ./.wordpress_data:/var/www/html/
+            # uncomment line below to start theme development
+            # directory below should contain theme style.css file
+            # - ./example-theme-src:/var/www/html/wp-content/themes/example-theme
+            # uncomment line below to start plugin development
+            # directory below should contain main plugin PHP file
+            - .:/var/www/html/wp-content/plugins/gtm-consent-mode-banner
         ports:
             - "80:80"
         links:
-            - mariadb
-    mariadb:
-        container_name: mariadb
-        image: mariadb:10.3
-        volumes:
-            - ./.docker/mariadb:/var/lib/mysql
+            - mysql
+    mysql:
+        image: mysql
+        restart: always
+        env_file: .env
         environment:
-            MYSQL_DATABASE: wordpress
-            MYSQL_ROOT_PASSWORD: password
+            - MYSQL_DATABASE=${WORDPRESS_DB_NAME}
+            - MYSQL_USER=${WORDPRESS_DB_USER}
+            - MYSQL_PASSWORD=${WORDPRESS_DB_PASSWORD}
         ports:
             - "3306:3306"
-    cli:
+        volumes:
+            - mysql_data:/var/lib/mysql
+    web-cli:
+        profiles: ['cli']
         image: wordpress:cli
+        command: bash
+        user: "33:33"
+        env_file: .env
+        volumes_from:
+            - web
+        links:
+            - web
+            - mysql
+    mysql-cli:
+        profiles: ['cli']
+        image: mysql
+        env_file: .env
+        links:
+            - mysql:mysql
+        command: bash -c 'exec mysql -hmysql -uroot -p$$MYSQL_ROOT_PASSWORD $$MYSQL_DATABASE'
+        environment:
+            - MYSQL_DATABASE=${WORDPRESS_DB_NAME}
+            - MYSQL_USER=${WORDPRESS_DB_USER}
+            - MYSQL_PASSWORD=${WORDPRESS_DB_PASSWORD}
+        volumes_from:
+            - mysql
+    php-cli:
+        profiles: ['cli']
+        image: composer
         env_file: .env
         command: bash
         volumes:
-            - ./docker/wordpress:/var/www/html/
-    php-cli:
-        image: mfrankiewicz/php:7.1-cli
-        working_dir: /var/www
-        entrypoint: bash
-        volumes:
-            - ./:/var/www
+           - .:/app
 volumes:
     mysql_data: {}
+
