@@ -88,6 +88,14 @@ class SettingsService
         );
 
         $this->settingsUtil->addSettingsField(
+            'banner_display_wall',
+            'Wall',
+            [$this, 'checkboxField'],
+            'basic',
+            'Whether to display a "wall" which will cover (with some default opacity) the content of the page when banner is shown.',
+        );
+
+        $this->settingsUtil->addSettingsField(
             'banner_theme',
             'Theme',
             [$this, 'selectField'],
@@ -189,6 +197,7 @@ class SettingsService
 
            $defaults = [
             'banner_display_mode' => 'bar',
+            'banner_display_wall' => 0,
             'banner_title' => 'Cookies Policy',
             'banner_description' => 'We are using various cookies files. Learn more in our [privacy policy](#) and make your choice.',
             'banner_buttons_accept' => 'Accept',

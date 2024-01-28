@@ -2,7 +2,7 @@
 /**
  * Plugin Name: GTM Consent Mode Banner
  * Plugin URI:  https://wordpress.org/plugins/gtm-consent-mode-banner
- * Description: Easiest way to deploy Cookies Banner compatible with GTM Consent Mode
+ * Description: Lightweight (1.9 kB) Consent/Cookies Banner compatible with GTM Consent Mode.
  * Version:     1.0.0
  * Author:      Tag Concierge
  * Author URI:  https://tagconcierge.com/

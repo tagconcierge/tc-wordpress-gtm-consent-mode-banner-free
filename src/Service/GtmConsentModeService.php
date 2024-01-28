@@ -57,6 +57,7 @@ EOD;
 
         $settings = array_reduce([
             'banner_display_mode',
+            'banner_display_wall',
             'banner_title',
             'banner_description',
             'banner_buttons_accept',
@@ -73,10 +74,10 @@ EOD;
         $consentTypes = array_filter($this->settingsUtil->getOption('consent_types'), function ($type) {
             return $type['name'];
         });
-
         $config = json_encode([
             'display' => [
                 'mode' => $settings['banner_display_mode'],
+                'wall' => $settings['banner_display_wall'] == 1
             ],
             'consent_types' => $consentTypes,
             'modal' => [
