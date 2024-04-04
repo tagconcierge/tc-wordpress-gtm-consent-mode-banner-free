@@ -21,8 +21,8 @@ class SettingsUtil
         $this->spineCaseNamespace = GtmConsentModeBanner::SPINE_CASE_NAMESPACE;
     }
 
-    public function getOption( $optionName) {
-        return get_option($this->snakeCaseNamespace . '_' . $optionName);
+    public function getOption( $optionName, $default = false ) {
+        return get_option($this->snakeCaseNamespace . '_' . $optionName, $default);
     }
 
     public function deleteOption( $optionName): bool
@@ -54,7 +54,7 @@ class SettingsUtil
         ];
         add_settings_section(
             $this->snakeCaseNamespace . '_' . $sectionName,
-            __( $sectionTitle, $this->spineCaseNamespace ),
+            $sectionTitle,
             static function( $args) use ( $description) {
                 ?>
 
@@ -75,7 +75,7 @@ class SettingsUtil
         add_settings_field(
             $this->snakeCaseNamespace . '_' . $fieldName, // As of WP 4.6 this value is used only internally.
             // Use $args' label_for to populate the id inside the callback.
-            __( $fieldTitle, $this->spineCaseNamespace ),
+            $fieldTitle,
             $fieldCallback,
             $this->snakeCaseNamespace . '_' . $section['tab'],
             $this->snakeCaseNamespace . '_' . $fieldSection,
@@ -126,7 +126,7 @@ class SettingsUtil
                         do_settings_sections( $snakeCaseNamespace . '_' . $activeTab );
                         // output save settings button
                         if (false !== $this->tabs[$activeTab]['show_save_button']) {
-                            submit_button( __( 'Save Settings', $spineCaseNamespace ) );
+                            submit_button( __( 'Save Settings', 'gtm-consent-mode-banner' ) );
                         }
                         ?>
                     </form>

@@ -12,6 +12,8 @@
  * Domain Path: /languages
  */
 
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 use TagConcierge\GtmConsentModeBanner\GtmConsentModeBanner;
 
 require __DIR__ . '/vendor/autoload.php';

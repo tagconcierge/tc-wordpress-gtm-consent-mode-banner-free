@@ -361,9 +361,11 @@ class SettingsService
                 ><?php echo esc_html($label); ?></option>
             <?php endforeach ?>
         </select>
+        <?php if (isset($args['description'])) : ?>
         <p class="description">
             <?php echo wp_kses($args['description'], SanitizationUtil::WP_KSES_ALLOWED_HTML, SanitizationUtil::WP_KSES_ALLOWED_PROTOCOLS); ?>
         </p>
+        <?php endif; ?>
         <?php
     }
 
@@ -379,9 +381,11 @@ class SettingsService
             rows="<?php echo esc_html( $args['rows'] ); ?>"
             placeholder="<?php echo esc_html( $args['placeholder'] ); ?>"
             name="<?php echo esc_attr( $args['label_for'] ); ?>"><?php echo wp_kses($value, SanitizationUtil::WP_KSES_ALLOWED_HTML, SanitizationUtil::WP_KSES_ALLOWED_PROTOCOLS); ?></textarea>
+        <?php if (isset($args['description'])) : ?>
         <p class="description">
             <?php echo esc_html( $args['description'] ); ?>
         </p>
+        <?php endif; ?>
         <?php
     }
 
@@ -400,9 +404,11 @@ class SettingsService
             value="<?php echo esc_html($value); ?>"
             placeholder="<?php echo esc_html( $args['placeholder'] ); ?>"
             name="<?php echo esc_attr( $args['label_for'] ); ?>" />
+        <?php if (isset($args['description'])) : ?>
         <p class="description">
             <?php echo esc_html( $args['description'] ); ?>
         </p>
+        <?php endif; ?>
         <?php
     }
 

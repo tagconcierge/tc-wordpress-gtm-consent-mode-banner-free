@@ -15,7 +15,6 @@ class GtmConsentModeService
     {
         $this->settingsUtil = $settingsUtil;
         $this->outputUtil = $outputUtil;
-        $this->dataLayerVariableName = true === $this->eventDeferring || true === $this->requireConsentBeforeGtmLoad ? 'gtmCookieDataLayer' : 'dataLayer';
 
         $this->initialScripts();
         $this->bannerScripts();
@@ -26,7 +25,7 @@ class GtmConsentModeService
             return;
         }
 
-        $consentTypes = json_encode(array_reduce($this->settingsUtil->getOption('consent_types'), function($agg, $type) {
+        $consentTypes = json_encode(array_reduce($this->settingsUtil->getOption('consent_types', []), function($agg, $type) {
             if ('' === $type['name']) {
                 return $agg;
             }
@@ -34,8 +33,7 @@ class GtmConsentModeService
             return $agg;
         }, []));
 
-        $script = <<<EOD
-window.dataLayer = window.dataLayer || [];
+        $script = "window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('consent', 'default', $consentTypes);
 
@@ -44,8 +42,8 @@ try {
   if (consentPreferences !== null) {
      gtag('consent', 'update', consentPreferences);
   }
-} catch (error) {}
-EOD;
+} catch (error) {}";
+
         $this->outputUtil->addInlineScript($script, false);
     }
 
@@ -97,76 +95,7 @@ EOD;
                 ]
             ],
         ]);
-        $script = <<<EOD
-    var config = $config;
-        config.styles = {
-            '.button': {
-                'text-decoration': 'none',
-                background: 'none',
-                color: '#333333',
-                padding: '4px 10px',
-                'border': '1px solid #000',
-            },
-            '#consent-banner-js-modal': {
-                background: "#fff",
-                padding: '10px 30px 30px',
-                'box-shadow': 'rgba(0, 0, 0, 0.4) 0 0 20px'
-            },
-            '#consent-banner-js-modal .consent-banner-js-modal-wrapper': {
-              margin: '0 auto',
-              display: 'flex',
-              'justify-content': 'center'
-            },
-            '#consent-banner-js-modal .consent-banner-js-modal-buttons': {
-              'margin-top': '12px',
-              'text-align': 'right'
-            },
-            '#consent-banner-js-modal .consent-banner-js-modal-buttons [href="#accept"]': {
-                'color': 'rgb(255 255 255)',
-                'border': '1px solid #083b99',
-                'background-color': '#083b99'
-            },
-            '#consent-banner-js-modal .consent-banner-js-modal-buttons [href="#settings"]': {
-                'margin-left': '10px'
-            },
-            '#consent-banner-js-settings .consent-banner-js-settings-buttons': {
-              'margin-top': '12px',
-              'text-align': 'right'
-            },
-            '#consent-banner-js-settings .consent-banner-js-settings-buttons [href="#save"]': {
-                'color': 'rgb(255 255 255)',
-                'border': '1px solid #083b99',
-                'background-color': '#083b99'
-            },
-            '#consent-banner-js-settings .consent-banner-js-settings-buttons [href="#close"]': {
-                'margin-left': '10px'
-            },
-            '#consent-banner-js-settings': {
-              position: 'fixed',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              background: '#fff',
-              'box-shadow': 'rgba(0, 0, 0, 0.4) 0 0 20px',
-              padding: '10px 30px 30px'
-            },
-            '#consent-banner-js-settings ul': {
-              'list-style': 'none',
-              'padding-left': 0
-            },
-            '#consent-banner-js-settings ul label': {
-                'font-weight': 'bold',
-                'font-size': '1.1em',
-                'margin-left': '5px'
-            },
-            '#consent-banner-js-settings ul li': {
-                'border-bottom': '1px solid rgba(0, 0, 0, .2)',
-                'margin-bottom': '15px'
-            },
-            '#consent-banner-js-settings ul p': {
-                'margin-left': '25px'
-            }
-        };
+        $script = "var config = $config;
   cookiesBannerJs(
     function() {
       try {
@@ -184,8 +113,7 @@ EOD;
       localStorage.setItem('consent_preferences', JSON.stringify(consentPreferences));
     },
     config
-  );
-EOD;
+  );";
         $this->outputUtil->loadExternalScript('https://public-assets.tagconcierge.com/consent-banner.min.js');
         $this->outputUtil->addInlineScript($script);
     }
