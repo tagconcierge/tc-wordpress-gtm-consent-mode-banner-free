@@ -60,12 +60,15 @@ try {
             'banner_description',
             'banner_buttons_accept',
             'banner_buttons_settings',
+            'banner_buttons_reject',
             'banner_settings_title',
             'banner_settings_description',
             'banner_settings_buttons_save',
             'banner_settings_buttons_close',
+            'banner_settings_buttons_reject',
+            'banner_settings_buttons_accept'
         ], function($agg, $setName) {
-            $agg[$setName] = $this->settingsUtil->getOption($setName);
+            $agg[$setName] = $this->settingsUtil->getOption($setName, '');
             return $agg;
         }, []);
 
@@ -84,18 +87,21 @@ try {
             'consent_types' => $consentTypes,
             'modal' => [
                 'title' => $settings['banner_title'],
-                'description' => $settings['banner_description'],
+                'description' => nl2br($settings['banner_description']),
                 'buttons' => [
                     'accept' => $settings['banner_buttons_accept'],
                     'settings' => $settings['banner_buttons_settings'],
+                    'reject' => $settings['banner_buttons_reject'],
                 ]
             ],
             'settings' => [
                 'title' => $settings['banner_settings_title'],
-                'description' => $settings['banner_settings_description'],
+                'description' => nl2br($settings['banner_settings_description']),
                 'buttons' => [
                     'save' => $settings['banner_settings_buttons_save'],
                     'close' => $settings['banner_settings_buttons_close'],
+                    'reject' => $settings['banner_settings_buttons_reject'],
+                    'accept' => $settings['banner_settings_buttons_accept']
                 ]
             ],
         ]);
@@ -118,7 +124,7 @@ try {
     },
     config
   );";
-        $this->outputUtil->loadExternalScript('https://public-assets.tagconcierge.com/cookies-banner-js/1.0.1/consent-banner.min.js');
+        $this->outputUtil->loadExternalScript('https://public-assets.tagconcierge.com/cookies-banner-js/1.1.0/consent-banner.min.js');
         $this->outputUtil->addInlineScript($script);
     }
 }
