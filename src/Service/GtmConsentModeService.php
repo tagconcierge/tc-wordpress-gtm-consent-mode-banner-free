@@ -69,7 +69,11 @@ try {
             return $agg;
         }, []);
 
-        $consentTypes = array_filter($this->settingsUtil->getOption('consent_types'), function ($type) {
+        $savedConsentTypes = is_array($this->settingsUtil->getOption('consent_types'))
+            ? $this->settingsUtil->getOption('consent_types')
+            : [];
+
+        $consentTypes = array_filter($savedConsentTypes, function ($type) {
             return $type['name'];
         });
         $config = json_encode([
@@ -114,7 +118,7 @@ try {
     },
     config
   );";
-        $this->outputUtil->loadExternalScript('https://public-assets.tagconcierge.com/consent-banner.min.js');
+        $this->outputUtil->loadExternalScript('https://public-assets.tagconcierge.com/cookies-banner-js/1.0.1/consent-banner.min.js');
         $this->outputUtil->addInlineScript($script);
     }
 }

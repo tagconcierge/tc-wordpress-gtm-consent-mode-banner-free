@@ -32,8 +32,11 @@ class OutputUtil
             wp_enqueue_script('gtm-consent-mode-banner', $script);
         }
 
-        foreach ($this->inlineScripts['header'] as $script) {
-            wp_add_inline_script('gtm-consent-mode-banner', $script, 'before');
+        foreach ($this->inlineScripts['footer'] as $script) {
+            wp_add_inline_script('gtm-consent-mode-banner', $script, 'after');
         }
+
+        wp_register_style( 'gtm-consent-mode-banner', 'https://public-assets.tagconcierge.com/cookies-banner-js/1.1.0/styles/light.css' );
+        wp_enqueue_style ( 'gtm-consent-mode-banner' );
     }
 }

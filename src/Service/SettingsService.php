@@ -38,7 +38,7 @@ class SettingsService
         $this->settingsUtil->addSettingsSection(
             'basic',
             'Basic Settings',
-            'This plugin allows to quickly deploy robust, privacy-oriented setup using Google Tag Manager Consent Mode. Under the hood it uses a lightweight (1.9kB) Cookie Banner.',
+            'This plugin allows to quickly deploy robust, privacy-oriented setup using Google Consent Mode (compatible with Google Tag Manager and Google Tags). Under the hood it uses a lightweight (1.9kB) Consent Banner.',
             'settings'
         );
 
@@ -101,7 +101,7 @@ class SettingsService
             [$this, 'selectField'],
             'basic',
             'Select theme of the banner that will apply default styling.',
-            ['options' => ['light' => 'Light', 'dark' => 'Dark']]
+            ['options' => ['light' => 'Light']]
         );
 
         $this->settingsUtil->addSettingsField(
@@ -232,7 +232,6 @@ class SettingsService
         ];
 
         foreach ($defaults as $defOpt => $defVal) {
-            // $this->settingsUtil->deleteOption($defOpt);
             if ( false === $this->settingsUtil->getOption($defOpt) ) {
                 $this->settingsUtil->updateOption($defOpt, $defVal);
             }
@@ -263,7 +262,7 @@ class SettingsService
                 'options' => ['denied' => 'denied', 'granted' => 'granted'],
             ],
         ];
-        // $this->settingsUtil->deleteOption('consent_types');
+
         $consentEventParameters = $this->settingsUtil->getOption('consent_types');
 
         if (false === is_array($consentEventParameters)) {
@@ -416,8 +415,8 @@ class SettingsService
     {
         $this->settingsUtil->addSubmenuPage(
             'options-general.php',
-            'GTM Consent Mode Banner',
-            'GTM Consent Mode',
+            'Consent Mode Banner',
+            'Consent Mode Banner',
             'manage_options'
         );
     }
