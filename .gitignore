@@ -1,3 +1,6 @@
 /.docker
 /.idea
 /.env
+/dist
+/vendor/
+.wordpress_data

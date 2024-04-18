@@ -1,0 +1,13 @@
+{
+    "name": "tagconcierge/gtm-consent-mode-banner-wordpress",
+    "type": "wordpress-plugin",
+    "minimum-stability": "stable",
+    "autoload": {
+        "psr-4": {
+            "TagConcierge\\GtmConsentModeBanner\\": "src"
+        }
+    },
+    "require-dev": {
+        "johnpbloch/wordpress-core": "*"
+    }
+}
