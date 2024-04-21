@@ -8,11 +8,14 @@ Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Lightweight (1.9 kB) Consent/Cookies Banner compatible with GTM Consent Mode.
+Lightweight (~3kB) Consent/Cookies Banner compatible with Google Consent Mode (GTM & Google Tags).
 
 == Description ==
 
-GTM Consent Mode Banner is a lightweight (1.9 kB), user-friendly WordPress plugin designed to integrate Google Tag Manager Consent Mode seamlessly into your website. It offers a simple and efficient way for website owners to comply with cookie and privacy regulations like GDPR and CCPA, by enabling visitors to select their cookie preferences easily.
+GTM Consent Mode Banner is a lightweight (~3 kB), user-friendly WordPress plugin designed to integrate Google Tag Manager Consent Mode seamlessly into your website. It offers a simple and efficient way for website owners to comply with cookie and privacy regulations like GDPR and CCPA, by enabling visitors to select their cookie preferences easily.
+
+![Consent Mode Banner Demo](https://github.com/tagconcierge/consent-banner-js/raw/main/assets/consent-banner-js-demo.gif)
+
 
 ## Features
 
@@ -22,6 +25,11 @@ GTM Consent Mode Banner is a lightweight (1.9 kB), user-friendly WordPress plugi
 - **Compliance with Privacy** Laws: Helps in making your website compliant with GDPR, CCPA, and other privacy regulations.
 - **Lightweight and Fast**: Designed to be non-intrusive and does not affect your website's load time.
 
+## Banner UI
+
+This plugin relies on open-source, lightweight Consent Banner UI available on GitHub:
+
+**[tagconcierge/consent-banner-js](https://github.com/tagconcierge/consent-banner-js)**
 
 == Installation ==
 
