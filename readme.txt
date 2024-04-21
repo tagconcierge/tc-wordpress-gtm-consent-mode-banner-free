@@ -1,8 +1,8 @@
 === GTM Consent Mode Banner ===
 Contributors: Tag Concierge
-Tags: google tag manager, consent mode, cookies banner, privacy
+Tags: google tag manager, consent mode, cookies banner, privacy, consent management
 Requires at least: 5.1.0
-Tested up to: 6.4
+Tested up to: 6.5.2
 Requires PHP: 7.0
 Stable tag: 1.0.0
 License: GPLv2 or later
@@ -13,8 +13,6 @@ Lightweight (~3kB) Consent/Cookies Banner compatible with Google Consent Mode (G
 == Description ==
 
 GTM Consent Mode Banner is a lightweight (~3 kB), user-friendly WordPress plugin designed to integrate Google Tag Manager Consent Mode seamlessly into your website. It offers a simple and efficient way for website owners to comply with cookie and privacy regulations like GDPR and CCPA, by enabling visitors to select their cookie preferences easily.
-
-![Consent Mode Banner Demo](https://github.com/tagconcierge/consent-banner-js/raw/main/assets/consent-banner-js-demo.gif)
 
 
 ## Features
@@ -41,15 +39,26 @@ This plugin relies on open-source, lightweight Consent Banner UI available on Gi
 
 == Frequently Asked Questions ==
 
+= Do I need to configure anything in GTM to enable consent mode? =
+
+Once your Consent Banner is deployed the Consent Mode will be provided and will work with Google Tags
+(GA4 and Google Ads) out-of-the-box. For other integrations you need to review your GTM tags to ensure they have correct consent checks settings.
+You can use Consent Overview screen to quickly review and update tags. [Read more here](https://docs.tagconcierge.com/article/59-how-to-configure-gtm-consent-mode)
+
+= Is it compatible with direct GA4 or Google Ads integration? =
+
+Yes, both direct usage of Google Tags and Google Tag Manager are supported. The plugin sends standard Consent Mode v2 parameters that will be respected by those tags.
+
+= Is it compatible with Facebook Pixel? =
+
+It can be compatible if Facebook Pixel is implemented via Google Tag Manager and correct consent settings are applied in GTM workspace. [Read more here](https://docs.tagconcierge.com/article/59-how-to-configure-gtm-consent-mode)
+
 = How to inject GTM tracking snippet? =
 
 By default this plugin push consent information to the GTM DataLayer object that can be installed by other plugins or directly in the theme code.
 It can also embed GTM snippets, go to settings to configure it.
 
-= Do I need to configure anything in GTM to enable consent mode =
 
-Once your Consent Banner is deployed you need to review all your GTM tags to ensure they have correct consent checks settings.
-You can use Consent Overview screen to quickly review and update tags. [Read more here](https://docs.tagconcierge.com/article/59-how-to-configure-gtm-consent-mode)
 
 == Screenshots ==
 
@@ -57,9 +66,9 @@ You can use Consent Overview screen to quickly review and update tags. [Read mor
 2. Consent Banner displayed as modal
 3. Consent Banner displayed as bar without "wall"
 4. Consent Banner settings screen with all consent types listed
-5. Consent Banner WP Admin basic settings
-6. Consent Banner WP Admin banner content settings
-7. Consent Banner WP Admin GTM snippets settings
+5. Consent Mode State Preview in Google Tag Assistant
+6. Consent Banner WP Admin basic settings
+7. Consent Banner WP Admin banner content settings
 8. Consent Banner WP Admin consent types settings
 
 
