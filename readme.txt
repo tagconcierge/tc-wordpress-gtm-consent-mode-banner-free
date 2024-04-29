@@ -1,6 +1,6 @@
-=== GTM Consent Mode Banner ===
+=== Consent Mode Banner ===
 Contributors: Tag Concierge
-Tags: google tag manager, consent mode, cookies banner, privacy, consent management
+Tags: google tag manager, consent mode, cookies banner, privacy, consent management, google ads
 Requires at least: 5.1.0
 Tested up to: 6.5.2
 Requires PHP: 7.0
@@ -12,12 +12,12 @@ Lightweight (~3kB) Consent/Cookies Banner compatible with Google Consent Mode (G
 
 == Description ==
 
-GTM Consent Mode Banner is a lightweight (~3 kB), user-friendly WordPress plugin designed to integrate Google Tag Manager Consent Mode seamlessly into your website. It offers a simple and efficient way for website owners to comply with cookie and privacy regulations like GDPR and CCPA, by enabling visitors to select their cookie preferences easily.
+Consent Mode Banner is a lightweight (~3 kB), user-friendly WordPress plugin designed to integrate Google Consent Mode seamlessly into your website. It offers a simple and efficient way for website owners to comply with cookie and privacy regulations like GDPR and CCPA, by enabling visitors to select their cookie preferences easily.
 
 
 ## Features
 
-- **Simple Setup**: Integrate with Google Tag Manager with minimal configuration.
+- **Simple Setup**: Integrate with Google Tag and Google Tag Manager with minimal configuration.
 - **Customizable Consent Banner**: Tailor the appearance and message of your consent banner.
 - **User Preference Control**: Allows users to specify their consent for different types of cookies (e.g., necessary, analytics, marketing).
 - **Compliance with Privacy** Laws: Helps in making your website compliant with GDPR, CCPA, and other privacy regulations.
@@ -31,7 +31,7 @@ This plugin relies on open-source, lightweight Consent Banner UI available on Gi
 
 == Installation ==
 
-1. Upload or install `GTM Consent Mode Banner` plugin from WordPress plugins directory.
+1. Upload or install `Consent Mode Banner` plugin from WordPress plugins directory.
 2. Activate the plugin through the `Plugins` menu in WordPress.
 3. That's it! Consent State will be pushed to DataLayer adhering to Consent Mode API
 4. Use plugin settings to customise the content and consent settings.
