@@ -8,7 +8,7 @@ Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Lightweight (~3kB) Consent/Cookies Banner compatible with Google Consent Mode (GTM & Google Tags).
+Lightweight (~3kB) Consent/Cookies Banner compatible with Google Consent Mode (GTM & Google Tags). No account or subscription is needed.
 
 == Description ==
 
