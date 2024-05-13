@@ -1,6 +1,6 @@
 === Consent Mode Banner ===
-Contributors: Tag Concierge
-Tags: google tag manager, consent mode, cookies banner, privacy, consent management, google ads
+Contributors: tagconcierge
+Tags: google tag manager, consent mode, cookies banner, consent management, google ads
 Requires at least: 5.1.0
 Tested up to: 6.5.2
 Requires PHP: 7.0
