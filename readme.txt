@@ -4,7 +4,7 @@ Tags: google tag manager, consent mode, cookies banner, privacy, consent managem
 Requires at least: 5.1.0
 Tested up to: 6.5.2
 Requires PHP: 7.0
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -73,6 +73,10 @@ It can also embed GTM snippets, go to settings to configure it.
 
 
 == Changelog ==
+
+= 1.0.1 =
+
+* Fix javascript loading ordering
 
 = 1.0.0 =
 
