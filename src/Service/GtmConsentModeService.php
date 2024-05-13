@@ -110,9 +110,6 @@ try {
     function() {
       try {
         var consentPreferences = JSON.parse(localStorage.getItem('consent_preferences'));
-        if (consentPreferences !== null) {
-           gtag('consent', 'update', consentPreferences);
-        }
         return consentPreferences;
       } catch (error) {
         return null;
