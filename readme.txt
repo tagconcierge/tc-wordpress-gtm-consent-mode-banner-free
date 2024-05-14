@@ -23,6 +23,9 @@ Consent Mode Banner is a lightweight (~3 kB), user-friendly WordPress plugin des
 - **Compliance with Privacy** Laws: Helps in making your website compliant with GDPR, CCPA, and other privacy regulations.
 - **Lightweight and Fast**: Designed to be non-intrusive and does not affect your website's load time.
 
+
+**[Documentation](https://docs.tagconcierge.com/article/72-how-to-configure-google-consent-mode-wordpress-woocommerce)**
+
 ## Banner UI
 
 This plugin relies on open-source, lightweight Consent Banner UI available on GitHub:
