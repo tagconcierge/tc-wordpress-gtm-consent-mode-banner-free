@@ -38,7 +38,7 @@ class SettingsService
         $this->settingsUtil->addSettingsSection(
             'basic',
             'Basic Settings',
-            'This plugin allows to quickly deploy robust, privacy-oriented setup using Google Tag Manager Consent Mode. Under the hood it uses a lightweight (1.9kB) Cookie Banner.',
+            'This plugin allows to quickly deploy robust, privacy-oriented setup using Google Consent Mode (compatible with Google Tag Manager and Google Tags). Under the hood it uses a lightweight (1.9kB) Consent Banner.',
             'settings'
         );
 
@@ -66,7 +66,7 @@ class SettingsService
         $this->settingsUtil->addSettingsSection(
             'consent_settings',
             'Consent Types',
-            'Consent type is a category of ',
+            'A consent type is related to a purpose of cookies storage and data processing. Advertising or Personalization are examples of two distinct purposes. You can learn more in <a href="https://support.google.com/google-ads/answer/13802165?sjid=8325387811722316139-EU">Google Consent Mode reference documentation</a>. You can specify any number of consent types below, whether they are one of the standard Google types or not. They will be added and configured in all consent mode parameters pushed to DataLayer and GTM workspace.',
             'event_settings'
         );
 
@@ -101,7 +101,7 @@ class SettingsService
             [$this, 'selectField'],
             'basic',
             'Select theme of the banner that will apply default styling.',
-            ['options' => ['light' => 'Light', 'dark' => 'Dark']]
+            ['options' => ['light' => 'Light']]
         );
 
         $this->settingsUtil->addSettingsField(
@@ -133,9 +133,9 @@ class SettingsService
         $this->settingsUtil->addSettingsField(
             'banner_description',
             'Content',
-            [$this, 'inputField'],
+            [$this, 'textareaField'],
             'banner',
-            'Content of the banner. Supports simple markdown like [links](https://url.com) or **bold**. Buttons will be shown on the right side of this content.'
+            'Content of the main banner. Supports simple markdown like [links](https://url.com) or **bold**. Buttons will be shown on the right side of this content.'
         );
 
         $this->settingsUtil->addSettingsField(
@@ -143,7 +143,7 @@ class SettingsService
             'Accept Button',
             [$this, 'inputField'],
             'banner',
-            'Text of accept button on the main banner.'
+            'Text of "accept" button on the main banner.'
         );
 
         $this->settingsUtil->addSettingsField(
@@ -151,7 +151,15 @@ class SettingsService
             'Open Settings Button',
             [$this, 'inputField'],
             'banner',
-            'Text of settings button on the main banner.'
+            'Text of "settings" button on the main banner.'
+        );
+
+        $this->settingsUtil->addSettingsField(
+            'banner_buttons_reject',
+            'Reject Button',
+            [$this, 'inputField'],
+            'banner',
+            'Text of "reject" or "deny" button on the main banner.'
         );
 
         $this->settingsUtil->addSettingsField(
@@ -159,15 +167,15 @@ class SettingsService
             'Title',
             [$this, 'inputField'],
             'banner_settings_modal',
-            'Title of the main banner modal. Not shown when Display Mode is set to "bar".'
+            'Title of the settings modal.'
         );
 
         $this->settingsUtil->addSettingsField(
             'banner_settings_description',
             'Content',
-            [$this, 'inputField'],
+            [$this, 'textareaField'],
             'banner_settings_modal',
-            'Content of the banner. Supports simple markdown like [links](https://url.com) or **bold**. '
+            'Content of the settings modal. Supports simple markdown like [links](https://url.com) or **bold**. '
         );
 
         $this->settingsUtil->addSettingsField(
@@ -175,7 +183,7 @@ class SettingsService
             'Save Button',
             [$this, 'inputField'],
             'banner_settings_modal',
-            'Text of save button on the main banner.'
+            'Text of "save" button on the settings modal.'
         );
 
         $this->settingsUtil->addSettingsField(
@@ -183,7 +191,23 @@ class SettingsService
             'Close Button',
             [$this, 'inputField'],
             'banner_settings_modal',
-            'Text of settings button on the main banner.'
+            'Text of "close" button on the settings modal.'
+        );
+
+        $this->settingsUtil->addSettingsField(
+            'banner_settings_buttons_reject',
+            'Reject Button',
+            [$this, 'inputField'],
+            'banner_settings_modal',
+            'Text of "reject" button on the settings modal.'
+        );
+
+        $this->settingsUtil->addSettingsField(
+            'banner_settings_buttons_accept',
+            'Accept Button',
+            [$this, 'inputField'],
+            'banner_settings_modal',
+            'Text of "accept" button on the settings modal.'
         );
 
         $this->settingsUtil->addSettingsField(
@@ -200,12 +224,13 @@ class SettingsService
             'banner_display_wall' => 0,
             'banner_title' => 'Cookies Policy',
             'banner_description' => 'We are using various cookies files. Learn more in our [privacy policy](#) and make your choice.',
-            'banner_buttons_accept' => 'Accept',
+            'banner_buttons_accept' => 'Accept all',
             'banner_buttons_settings' => 'Settings',
             'banner_settings_title' => 'Cookies Settings',
             'banner_settings_description' => 'In order to provide you with best experience we use various...',
             'banner_settings_buttons_save' => 'Save preferences',
-            'banner_settings_buttons_close' => 'Close',
+            'banner_settings_buttons_reject' => 'Reject',
+            'banner_settings_buttons_accept' => 'Accept all',
             'consent_types' => [
                 [
                     'name' => 'analytics_storage',
@@ -232,7 +257,6 @@ class SettingsService
         ];
 
         foreach ($defaults as $defOpt => $defVal) {
-            // $this->settingsUtil->deleteOption($defOpt);
             if ( false === $this->settingsUtil->getOption($defOpt) ) {
                 $this->settingsUtil->updateOption($defOpt, $defVal);
             }
@@ -263,7 +287,7 @@ class SettingsService
                 'options' => ['denied' => 'denied', 'granted' => 'granted'],
             ],
         ];
-        // $this->settingsUtil->deleteOption('consent_types');
+
         $consentEventParameters = $this->settingsUtil->getOption('consent_types');
 
         if (false === is_array($consentEventParameters)) {
@@ -361,9 +385,11 @@ class SettingsService
                 ><?php echo esc_html($label); ?></option>
             <?php endforeach ?>
         </select>
+        <?php if (isset($args['description'])) : ?>
         <p class="description">
             <?php echo wp_kses($args['description'], SanitizationUtil::WP_KSES_ALLOWED_HTML, SanitizationUtil::WP_KSES_ALLOWED_PROTOCOLS); ?>
         </p>
+        <?php endif; ?>
         <?php
     }
 
@@ -377,11 +403,13 @@ class SettingsService
             id="<?php echo esc_attr( $args['label_for'] ); ?>"
             class="large-text code"
             rows="<?php echo esc_html( $args['rows'] ); ?>"
-            placeholder="<?php echo esc_html( $args['placeholder'] ); ?>"
+            placeholder="<?php echo esc_html( @$args['placeholder'] ); ?>"
             name="<?php echo esc_attr( $args['label_for'] ); ?>"><?php echo wp_kses($value, SanitizationUtil::WP_KSES_ALLOWED_HTML, SanitizationUtil::WP_KSES_ALLOWED_PROTOCOLS); ?></textarea>
+        <?php if (isset($args['description'])) : ?>
         <p class="description">
             <?php echo esc_html( $args['description'] ); ?>
         </p>
+        <?php endif; ?>
         <?php
     }
 
@@ -398,11 +426,13 @@ class SettingsService
                 disabled="disabled"
             <?php endif; ?>
             value="<?php echo esc_html($value); ?>"
-            placeholder="<?php echo esc_html( $args['placeholder'] ); ?>"
+            placeholder="<?php echo esc_html( @$args['placeholder'] ); ?>"
             name="<?php echo esc_attr( $args['label_for'] ); ?>" />
+        <?php if (isset($args['description'])) : ?>
         <p class="description">
             <?php echo esc_html( $args['description'] ); ?>
         </p>
+        <?php endif; ?>
         <?php
     }
 
@@ -410,8 +440,8 @@ class SettingsService
     {
         $this->settingsUtil->addSubmenuPage(
             'options-general.php',
-            'GTM Consent Mode Banner',
-            'GTM Consent Mode',
+            'Consent Mode Banner',
+            'Consent Mode Banner',
             'manage_options'
         );
     }
