@@ -1,6 +1,7 @@
 {
     "name": "tagconcierge/gtm-consent-mode-banner-wordpress",
     "type": "wordpress-plugin",
+    "version": "1.0.2",
     "minimum-stability": "stable",
     "autoload": {
         "psr-4": {
