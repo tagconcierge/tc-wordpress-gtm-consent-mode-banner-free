@@ -121,7 +121,7 @@ try {
     },
     config
   );";
-        $this->outputUtil->loadExternalScript('https://public-assets.tagconcierge.com/cookies-banner-js/1.1.0/consent-banner.min.js');
+        $this->outputUtil->loadExternalScript('https://public-assets.tagconcierge.com/consent-banner/1.2.3/cb.min.js');
         $this->outputUtil->addInlineScript($script);
     }
 }
