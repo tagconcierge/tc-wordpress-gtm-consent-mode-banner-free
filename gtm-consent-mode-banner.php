@@ -14,9 +14,9 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-use TagConcierge\GtmConsentModeBanner\GtmConsentModeBanner;
+use TagConcierge\ConsentModeBannerFree\ConsentModeBanner;
 
 require __DIR__ . '/vendor/autoload.php';
 
-$plugin = new GtmConsentModeBanner();
+$plugin = new ConsentModeBanner();
 $plugin->initialize();

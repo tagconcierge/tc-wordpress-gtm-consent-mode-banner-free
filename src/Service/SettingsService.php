@@ -1,9 +1,9 @@
 <?php
 
-namespace TagConcierge\GtmConsentModeBanner\Service;
+namespace TagConcierge\ConsentModeBannerFree\Service;
 
-use TagConcierge\GtmConsentModeBanner\Util\SanitizationUtil;
-use TagConcierge\GtmConsentModeBanner\Util\SettingsUtil;
+use TagConcierge\ConsentModeBannerFree\Util\SanitizationUtil;
+use TagConcierge\ConsentModeBannerFree\Util\SettingsUtil;
 
 class SettingsService
 {

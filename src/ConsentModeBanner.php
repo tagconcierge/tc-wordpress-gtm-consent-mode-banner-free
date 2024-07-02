@@ -1,10 +1,10 @@
 <?php
 
-namespace TagConcierge\GtmConsentModeBanner;
+namespace TagConcierge\ConsentModeBannerFree;
 
-use TagConcierge\GtmConsentModeBanner\DependencyInjection\Container;
+use TagConcierge\ConsentModeBannerFree\DependencyInjection\Container;
 
-class GtmConsentModeBanner
+class ConsentModeBanner
 {
     public const SNAKE_CASE_NAMESPACE = 'gtm_consent_mode_banner';
 

@@ -4,7 +4,7 @@
     "minimum-stability": "stable",
     "autoload": {
         "psr-4": {
-            "TagConcierge\\GtmConsentModeBanner\\": "src"
+            "TagConcierge\\ConsentModeBannerFree\\": "src"
         }
     },
     "require-dev": {

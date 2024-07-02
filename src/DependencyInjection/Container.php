@@ -1,17 +1,20 @@
 <?php
 
-namespace TagConcierge\GtmConsentModeBanner\DependencyInjection;
+namespace TagConcierge\ConsentModeBannerFree\DependencyInjection;
 
-use TagConcierge\GtmConsentModeBanner\Service\GtmConsentModeService;
-use TagConcierge\GtmConsentModeBanner\Service\SettingsService;
-use TagConcierge\GtmConsentModeBanner\Util\OutputUtil;
-use TagConcierge\GtmConsentModeBanner\Util\SettingsUtil;
+use TagConcierge\ConsentModeBannerFree\Service\GtmConsentModeService;
+use TagConcierge\ConsentModeBannerFree\Service\GtmSnippetService;
+use TagConcierge\ConsentModeBannerFree\Service\SettingsService;
+use TagConcierge\ConsentModeBannerFree\Util\OutputUtil;
+use TagConcierge\ConsentModeBannerFree\Util\SettingsUtil;
 
 class Container
 {
     private $outputUtil;
 
     private $gtmSnippetService;
+
+    private $gtmConsentModeService;
 
     private $settingsService;
 
@@ -21,7 +24,8 @@ class Container
     {
         $this->outputUtil = new OutputUtil();
         $this->settingsUtil = new SettingsUtil();
-        $this->gtmSnippetService = new GtmConsentModeService($this->settingsUtil, $this->outputUtil);
+        $this->gtmConsentModeService = new GtmConsentModeService($this->settingsUtil, $this->outputUtil);
+        $this->gtmSnippetService = new GtmSnippetService($this->settingsUtil);
         $this->settingsService = new SettingsService($this->settingsUtil);
     }
 
@@ -38,6 +42,10 @@ class Container
     public function getOutputUtil(): OutputUtil
     {
         return $this->outputUtil;
+    }
+
+    public function getGtmConsentModeService(): GtmConsentModeService {
+        return $this->gtmConsentModeService;
     }
 
     public function getGtmSnippetService(): GtmSnippetService

@@ -1,6 +1,6 @@
 <?php
 
-namespace TagConcierge\GtmConsentModeBanner\Util;
+namespace TagConcierge\ConsentModeBannerFree\Util;
 
 class OutputUtil
 {

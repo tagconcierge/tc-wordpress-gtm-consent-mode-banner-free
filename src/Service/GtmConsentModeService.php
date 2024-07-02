@@ -1,9 +1,9 @@
 <?php
 
-namespace TagConcierge\GtmConsentModeBanner\Service;
+namespace TagConcierge\ConsentModeBannerFree\Service;
 
-use TagConcierge\GtmConsentModeBanner\Util\OutputUtil;
-use TagConcierge\GtmConsentModeBanner\Util\SettingsUtil;
+use TagConcierge\ConsentModeBannerFree\Util\OutputUtil;
+use TagConcierge\ConsentModeBannerFree\Util\SettingsUtil;
 
 class GtmConsentModeService
 {
