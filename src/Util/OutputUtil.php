@@ -1,56 +1,51 @@
 <?php
 
-namespace TagConcierge\GtmConsentModeBanner\Util;
+namespace TagConcierge\ConsentModeBannerFree\Util;
 
-class OutputUtil
-{
-    private $inlineScripts = ['header' => [], 'footer' => []];
-    private $externalScripts = ['header' => [], 'footer' => []];
+class OutputUtil {
 
-    public function __construct()
-    {
-        add_action( 'wp_head', [$this, 'wpHead'], 0 );
-        add_action( 'wp_enqueue_scripts', [$this, 'wpEnqueueScripts'] );
-    }
+	private $inlineScripts = ['header' => [], 'footer' => []];
+	private $externalScripts = ['header' => [], 'footer' => []];
 
-    public function loadExternalScript($script, $footer = true): OutputUtil
-    {
-        $this->externalScripts[true === $footer ? 'footer' : 'header'][] = $script;
-        return $this;
-    }
+	public function __construct() {
+		add_action( 'wp_head', [$this, 'wpHead'], 0 );
+		add_action( 'wp_enqueue_scripts', [$this, 'wpEnqueueScripts'] );
+	}
 
-    public function addInlineScript($script, $footer = true): OutputUtil
-    {
+	public function loadExternalScript( $script, $footer = true): OutputUtil {
+		$this->externalScripts[true === $footer ? 'footer' : 'header'][] = $script;
+		return $this;
+	}
 
-        $this->inlineScripts[true === $footer ? 'footer' : 'header'][] = $script;
+	public function addInlineScript( $script, $footer = true): OutputUtil {
 
-        return $this;
-    }
+		$this->inlineScripts[true === $footer ? 'footer' : 'header'][] = $script;
 
-    public function wpHead(): void
-    {
-        if (0 === count($this->inlineScripts['header'])) {
-            echo '<!-- gtm-cookies no-header-scripts -->';
-            return;
-        }
-        echo '<script type="text/javascript" data-gtm-cookies-scripts>';
-        foreach ($this->inlineScripts['header'] as $script) {
-            echo filter_var($script, FILTER_FLAG_STRIP_BACKTICK) . "\n";
-        }
-        echo "</script>\n";
-    }
+		return $this;
+	}
 
-    public function wpEnqueueScripts(): void
-    {
-        foreach ($this->externalScripts['footer'] as $script) {
-            wp_enqueue_script('gtm-consent-mode-banner', $script);
-        }
+	public function wpHead(): void {
+		if (0 === count($this->inlineScripts['header'])) {
+			echo '<!-- gtm-cookies no-header-scripts -->';
+			return;
+		}
+		echo '<script type="text/javascript" data-gtm-cookies-scripts>';
+		foreach ($this->inlineScripts['header'] as $script) {
+			echo filter_var($script, FILTER_FLAG_STRIP_BACKTICK) . "\n";
+		}
+		echo "</script>\n";
+	}
 
-        foreach ($this->inlineScripts['footer'] as $script) {
-            wp_add_inline_script('gtm-consent-mode-banner', $script, 'after');
-        }
+	public function wpEnqueueScripts(): void {
+		foreach ($this->externalScripts['footer'] as $script) {
+			wp_enqueue_script('gtm-consent-mode-banner', $script);
+		}
 
-        wp_register_style( 'gtm-consent-mode-banner', 'https://public-assets.tagconcierge.com/cookies-banner-js/1.1.0/styles/light.css' );
-        wp_enqueue_style ( 'gtm-consent-mode-banner' );
-    }
+		foreach ($this->inlineScripts['footer'] as $script) {
+			wp_add_inline_script('gtm-consent-mode-banner', $script, 'after');
+		}
+
+		wp_register_style( 'gtm-consent-mode-banner', 'https://public-assets.tagconcierge.com/consent-banner/1.2.3/styles/light.css' );
+		wp_enqueue_style ( 'gtm-consent-mode-banner' );
+	}
 }

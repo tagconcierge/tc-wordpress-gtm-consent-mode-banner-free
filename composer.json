@@ -1,13 +1,27 @@
 {
     "name": "tagconcierge/gtm-consent-mode-banner-wordpress",
     "type": "wordpress-plugin",
+    "version": "1.0.2",
     "minimum-stability": "stable",
     "autoload": {
         "psr-4": {
-            "TagConcierge\\GtmConsentModeBanner\\": "src"
+            "TagConcierge\\ConsentModeBannerFree\\": "src"
         }
     },
     "require-dev": {
-        "johnpbloch/wordpress-core": "*"
+        "dealerdirect/phpcodesniffer-composer-installer": "^1",
+        "johnpbloch/wordpress-core": "*",
+        "roave/security-advisories": "dev-latest",
+        "woocommerce/woocommerce-sniffs": "1.0.0",
+        "wp-coding-standards/wpcs": "^3"
+    },
+    "scripts": {
+        "fix": "phpcbf --warning-severity=0 -s --ignore-annotations --extensions=php,html --ignore=*/vendor/* src/ gtm-consent-mode-banner.php",
+        "check": "phpcs --warning-severity=0 -s --ignore-annotations --extensions=php,html --ignore=*/vendor/* src/ gtm-consent-mode-banner.php"
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
     }
 }
