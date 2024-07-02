@@ -8,48 +8,43 @@ use TagConcierge\ConsentModeBannerFree\Service\SettingsService;
 use TagConcierge\ConsentModeBannerFree\Util\OutputUtil;
 use TagConcierge\ConsentModeBannerFree\Util\SettingsUtil;
 
-class Container
-{
-    private $outputUtil;
+class Container {
 
-    private $gtmSnippetService;
+	private $outputUtil;
 
-    private $gtmConsentModeService;
+	private $gtmSnippetService;
 
-    private $settingsService;
+	private $gtmConsentModeService;
 
-    private $settingsUtil;
+	private $settingsService;
 
-    public function __construct()
-    {
-        $this->outputUtil = new OutputUtil();
-        $this->settingsUtil = new SettingsUtil();
-        $this->gtmConsentModeService = new GtmConsentModeService($this->settingsUtil, $this->outputUtil);
-        $this->gtmSnippetService = new GtmSnippetService($this->settingsUtil);
-        $this->settingsService = new SettingsService($this->settingsUtil);
-    }
+	private $settingsUtil;
 
-    public function getSettingsUtil(): SettingsUtil
-    {
-        return $this->settingsUtil;
-    }
+	public function __construct() {
+		$this->outputUtil = new OutputUtil();
+		$this->settingsUtil = new SettingsUtil();
+		$this->gtmConsentModeService = new GtmConsentModeService($this->settingsUtil, $this->outputUtil);
+		$this->gtmSnippetService = new GtmSnippetService($this->settingsUtil);
+		$this->settingsService = new SettingsService($this->settingsUtil);
+	}
 
-    public function getSettingsService(): SettingsService
-    {
-        return $this->settingsService;
-    }
+	public function getSettingsUtil(): SettingsUtil {
+		return $this->settingsUtil;
+	}
 
-    public function getOutputUtil(): OutputUtil
-    {
-        return $this->outputUtil;
-    }
+	public function getSettingsService(): SettingsService {
+		return $this->settingsService;
+	}
 
-    public function getGtmConsentModeService(): GtmConsentModeService {
-        return $this->gtmConsentModeService;
-    }
+	public function getOutputUtil(): OutputUtil {
+		return $this->outputUtil;
+	}
 
-    public function getGtmSnippetService(): GtmSnippetService
-    {
-        return $this->gtmSnippetService;
-    }
+	public function getGtmConsentModeService(): GtmConsentModeService {
+		return $this->gtmConsentModeService;
+	}
+
+	public function getGtmSnippetService(): GtmSnippetService {
+		return $this->gtmSnippetService;
+	}
 }

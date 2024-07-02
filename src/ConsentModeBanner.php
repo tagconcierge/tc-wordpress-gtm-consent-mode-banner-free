@@ -4,16 +4,15 @@ namespace TagConcierge\ConsentModeBannerFree;
 
 use TagConcierge\ConsentModeBannerFree\DependencyInjection\Container;
 
-class ConsentModeBanner
-{
-    public const SNAKE_CASE_NAMESPACE = 'gtm_consent_mode_banner';
+class ConsentModeBanner {
 
-    public const SPINE_CASE_NAMESPACE = 'gtm-consent-mode-banner';
+	const SNAKE_CASE_NAMESPACE = 'gtm_consent_mode_banner';
 
-    private $container;
+	const SPINE_CASE_NAMESPACE = 'gtm-consent-mode-banner';
 
-    public function initialize()
-    {
-        $this->container = new Container();
-    }
+	private $container;
+
+	public function initialize() {
+		$this->container = new Container();
+	}
 }

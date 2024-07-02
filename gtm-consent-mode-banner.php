@@ -12,11 +12,12 @@
  * Domain Path: /languages
  */
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+exit; // Exit if accessed directly
+}
 
 use TagConcierge\ConsentModeBannerFree\ConsentModeBanner;
 
 require __DIR__ . '/vendor/autoload.php';
 
-$plugin = new ConsentModeBanner();
-$plugin->initialize();
+( new ConsentModeBanner() )->initialize();
