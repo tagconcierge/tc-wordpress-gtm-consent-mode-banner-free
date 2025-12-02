@@ -1,0 +1,15 @@
+== Changelog ==
+
+2025-12-02 - version 1.0.3
+* tested against the latest version of WordPress
+
+2024-07-02 - version 1.0.2
+* Fixes GTM snippets loading
+* Changes namespace due to naming collision
+* Upgrades Consent Banner JS library to 1.2.3
+
+2024-05-13 - version 1.0.1
+* Fix javascript loading ordering
+
+2024-05-01 - version 1.0.0
+* Initial version

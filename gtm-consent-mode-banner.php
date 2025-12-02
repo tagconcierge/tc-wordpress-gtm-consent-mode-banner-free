@@ -3,9 +3,9 @@
  * Plugin Name: Consent Mode Banner
  * Plugin URI:  https://wordpress.org/plugins/gtm-consent-mode-banner
  * Description: Lightweight (~3kB) Consent/Cookies Banner compatible with Google Consent Mode v2.
- * Version:     1.0.2
- * Author:      Tag Concierge
- * Author URI:  https://tagconcierge.com/
+ * Version:     1.0.3
+ * Author:      Tag Pilot
+ * Author URI:  https://tagpilot.io/
  * License:     GPLv2 or later
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: gtm-consent-mode-banner
